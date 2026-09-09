@@ -18,6 +18,10 @@ const protect = async (req, res, next) => {
       // Find user and attach to request (without password)
       req.user = await User.findById(decoded.id).select('-password');
 
+      if (!req.user) {
+        return res.status(401).json({ message: 'User session expired or user not found. Please log in again.' });
+      }
+
       next();
     } catch (error) {
       return res.status(401).json({ message: 'Not authorized, token failed' });
